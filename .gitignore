@@ -1,0 +1,70 @@
+# Yocto Build System .gitignore
+
+# Build directories - contains temporary build artifacts
+build-*/
+# Alternative build directory patterns
+build/
+builds/
+
+# Downloads directory - contains source tarballs
+downloads/
+DL_DIR/
+
+# Shared state cache - binary cache files
+sstate-cache/
+SSTATE_DIR/
+
+# Temporary directories
+tmp/
+temp/
+
+# Log files
+*.log
+log.*
+logs/
+
+# BitBake cache and metadata
+.cache/
+cache/
+conf/sanity_info
+
+# Editor and IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Build configuration that might contain sensitive info
+# (you may want to include some of these files)
+# conf/local.conf
+# conf/bblayers.conf
+
+# Keep only essential configuration files
+# The following files SHOULD be committed:
+# - Custom configuration files you created
+# - Layer configuration files
+# - Machine configuration files
+# - Recipe files
+
+# Ignore large binary outputs
+*.img
+*.wic
+*.tar.bz2
+*.tar.gz
+*.tar.xz
+deploy/
+
+# Ignore patches backup files
+*.orig
+*.rej
+
+# Ignore workspace metadata
+.bitbake/
