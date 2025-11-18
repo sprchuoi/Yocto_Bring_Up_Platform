@@ -31,40 +31,46 @@ This repository contains the Yocto Project setup for building custom Linux image
    git submodule update --init --recursive
    ```
 
-3. Set up the build environment for your target platform:
+3. Set up and build in one step:
    ```bash
-   # For BeagleBone (default)
-   ./setup-build.sh beaglebone
+   # Setup and build automatically
+   ./setup-build.sh raspberrypi4 --build
    
-   # For Raspberry Pi 4
+   # Setup only (manual build later)
    ./setup-build.sh raspberrypi4
    
-   # For Jetson Nano
-   ./setup-build.sh jetson-nano
+   # Clean build
+   ./setup-build.sh jetson-nano --clean --build
    ```
 
-4. Build the minimal image:
+4. Or use the advanced build script:
    ```bash
-   bitbake core-image-minimal
+   # Advanced build with monitoring
+   ./build.sh raspberrypi4 core-image-minimal
+   
+   # Build with options
+   ./build.sh jetson-nano core-image-base --clean --sdk
+   
+   # Build specific package only
+   ./build.sh beaglebone --package=linux-yocto
    ```
 
-### Alternative Manual Setup
+### Available Scripts
 
-If you prefer manual setup:
+- **`setup-build.sh`** - Quick setup and optional build
+- **`build.sh`** - Advanced build script with monitoring and options
+
+### Build Script Options
+
 ```bash
-# Choose your platform: beaglebone, raspberrypi4, or jetson-nano
-PLATFORM=raspberrypi4
+# Basic usage
+./setup-build.sh [platform] [--build] [--clean]
+./build.sh [platform] [image] [options]
 
-# Source Yocto environment
-source poky/oe-init-build-env build-${PLATFORM}
-
-# Restore platform configuration
-cd ..
-./restore-config.sh ${PLATFORM} build-${PLATFORM}
-cd build-${PLATFORM}
-
-# Build
-bitbake core-image-minimal
+# Examples
+./setup-build.sh raspberrypi4 --build=core-image-base
+./build.sh jetson-nano core-image-minimal --clean --verbose
+./build.sh beaglebone --package=u-boot --force
 ```
 
 ## Supported Platforms
