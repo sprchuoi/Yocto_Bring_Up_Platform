@@ -1,0 +1,17 @@
+[Unit]
+Description=BeagleBone Hardware Initialization Service
+Documentation=man:beagle-hardware-init
+After=local-fs.target network.target
+Before=multi-user.target
+DefaultDependencies=false
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/beagle-hardware-init.sh
+RemainAfterExit=yes
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target

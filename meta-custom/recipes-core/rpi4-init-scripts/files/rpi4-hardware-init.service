@@ -1,0 +1,17 @@
+[Unit]
+Description=Raspberry Pi 4 Hardware Initialization Service
+Documentation=man:rpi4-hardware-init
+After=local-fs.target network.target
+Before=multi-user.target
+DefaultDependencies=false
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/rpi4-hardware-init.sh
+RemainAfterExit=yes
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target

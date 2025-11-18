@@ -1,0 +1,35 @@
+--- a/beagle-can-setup.sh
++++ b/beagle-can-setup.sh
+@@ -14,12 +14,20 @@ modprobe c_can_platform
+ 
+ # Configure CAN0 (if available)
+ if [ -d /sys/class/net/can0 ]; then
+-    ip link set can0 type can bitrate 500000
++    # Try to configure with CAN-FD first, fallback to classic CAN
++    if ip link set can0 type can bitrate 500000 dbitrate 2000000 fd on 2>/dev/null; then
++        log_message "CAN0 configured with CAN-FD: 500kbps/2Mbps"
++    else
++        ip link set can0 type can bitrate 500000
++        log_message "CAN0 configured with classic CAN: 500kbps"
++    fi
+     ip link set up can0
+-    log_message "CAN0 configured at 500kbps"
+ else
+     log_message "CAN0 interface not found"
+ fi
+ 
+ # Configure CAN1 (if available)  
+ if [ -d /sys/class/net/can1 ]; then
+-    ip link set can1 type can bitrate 500000
++    # Try to configure with CAN-FD first, fallback to classic CAN
++    if ip link set can1 type can bitrate 500000 dbitrate 2000000 fd on 2>/dev/null; then
++        log_message "CAN1 configured with CAN-FD: 500kbps/2Mbps"
++    else
++        ip link set can1 type can bitrate 500000
++        log_message "CAN1 configured with classic CAN: 500kbps"
++    fi
+     ip link set up can1
+-    log_message "CAN1 configured at 500kbps"
+ else
+     log_message "CAN1 interface not found"
+ fi

@@ -1,0 +1,28 @@
+--- a/rpi4-hardware-init.sh
++++ b/rpi4-hardware-init.sh
+@@ -58,6 +58,25 @@ log_message "Configuring Docker..."
+ if systemctl list-unit-files | grep -q docker.service; then
+     systemctl enable docker
+     systemctl start docker
++    
++    # Docker optimization for Raspberry Pi 4
++    mkdir -p /etc/docker
++    cat > /etc/docker/daemon.json << 'EOF'
++{
++    "storage-driver": "overlay2",
++    "log-driver": "json-file",
++    "log-opts": {
++        "max-size": "10m",
++        "max-file": "3"
++    },
++    "max-concurrent-downloads": 3,
++    "max-concurrent-uploads": 3,
++    "default-runtime": "runc"
++}
++EOF
++    
++    # Restart Docker with new configuration
++    systemctl restart docker
+     log_message "Docker service enabled and started"
+     
+     # Add users to docker group
