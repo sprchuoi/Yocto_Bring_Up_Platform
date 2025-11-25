@@ -191,7 +191,7 @@ log_error() {
 }
 
 # Create log directory if it doesn't exist
-mkdir -p "$SCRIPT_DIR/logs"
+mkdir -p "$SCRIPT_DIR/logs" 2>/dev/null || true
 
 # Environment detection
 detect_environment() {

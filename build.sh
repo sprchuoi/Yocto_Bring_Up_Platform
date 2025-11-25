@@ -235,12 +235,9 @@ show_main_menu() {
     local actions=(
         "build:Build Platform Image"
         "setup:Setup Build Environment"
-        "platform:Platform Management"
         "config:Configuration Management"
-        "update:Update Configuration Files"
-        "utils:System Utilities"
+        "update:Update Config from Templates"
         "status:Show System Status"
-        "doctor:System Health Check"
         "clean:Clean Build Artifacts"
     )
     
@@ -288,19 +285,19 @@ run_interactive_mode() {
                 local platform
                 platform=$(show_platform_menu)
                 [[ -z "$platform" ]] && continue
-                show_live_output "\"$SCRIPT_DIR/scripts/pk-cli-original.sh\" build \"$platform\"" "Building Image for $platform"
+                show_live_output "$SCRIPT_DIR/scripts/pk-cli-original.sh build '$platform'" "Building Image for $platform"
                 ;;
             1) # Setup
                 local platform
                 platform=$(show_platform_menu)
                 [[ -z "$platform" ]] && continue
-                show_live_output "\"$SCRIPT_DIR/scripts/pk-cli-original.sh\" setup \"$platform\"" "Setting up $platform Environment"
+                show_live_output "$SCRIPT_DIR/scripts/pk-cli-original.sh setup '$platform'" "Setting up $platform Environment"
                 ;;
             2) # Platform
-                show_live_output "\"$SCRIPT_DIR/scripts/pk-cli-original.sh\" platform list" "Platform Management"
+                show_live_output "$SCRIPT_DIR/scripts/pk-cli-original.sh platform list" "Platform Management"
                 ;;
             3) # Config
-                show_live_output "\"$SCRIPT_DIR/scripts/pk-cli-original.sh\" config list" "Configuration Management"
+                show_live_output "$SCRIPT_DIR/scripts/pk-cli-original.sh config list" "Configuration Management"
                 ;;
             4) # Update
                 clear_screen
@@ -444,14 +441,10 @@ main() {
     # Check if pk CLI is available
     check_pk_cli
     
-    # If no arguments provided, run interactive mode by default
+    # If no arguments provided, run menuconfig mode by default
     if [ $# -eq 0 ]; then
-        # Show PK Logo with welcome message
-        clear_screen
-        pk_logo_show "animated" "rainbow" "PK Platform" "Interactive Tool"
-        sleep 1
-        
-        run_interactive_mode
+        # Launch menuconfig-style interface
+        exec "$SCRIPT_DIR/scripts/menuconfig.sh"
     else
         # Handle command line arguments - pass to CLI
         case "${1:-}" in

@@ -94,6 +94,7 @@ execute_build() {
     
     local build_dir="build-$platform"
     local start_time=$(date +%s)
+    local original_dir="$(pwd)"
     
     print_header "Starting build for $platform"
     print_info "Image: $image"
@@ -137,11 +138,19 @@ execute_build() {
     echo ""
     
     # Execute build with monitoring
+    local build_result=0
     if [ "$monitor" = true ]; then
         execute_build_with_monitoring "$build_cmd" "$platform" "$image" "$start_time"
+        build_result=$?
     else
         execute_build_simple "$build_cmd" "$platform" "$image" "$start_time" "$show_logs"
+        build_result=$?
     fi
+    
+    # Return to original directory
+    cd "$original_dir" || true
+    
+    return $build_result
 }
 
 # Simple build execution

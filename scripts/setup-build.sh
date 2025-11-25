@@ -98,8 +98,11 @@ if [ "$CLEAN_BUILD" = true ]; then
     echo "Clean build requested - will remove existing build directory"
 fi
 
+# Save the project root directory (before Yocto changes it)
+PROJECT_ROOT="$(pwd)"
+
 # Check if we're in the right directory
-if [ ! -f "README.md" ] || [ ! -d "poky" ]; then
+if [ ! -f "$PROJECT_ROOT/README.md" ] || [ ! -d "$PROJECT_ROOT/poky" ]; then
     echo "Error: Please run this script from the Yocto_build_custom directory"
     exit 1
 fi
@@ -108,27 +111,29 @@ fi
 BUILD_DIR="build-${PLATFORM}"
 
 # Clean build directory if requested
-if [ "$CLEAN_BUILD" = true ] && [ -d "$BUILD_DIR" ]; then
+if [ "$CLEAN_BUILD" = true ] && [ -d "$PROJECT_ROOT/$BUILD_DIR" ]; then
     echo "Cleaning existing build directory: $BUILD_DIR"
-    rm -rf "$BUILD_DIR"
+    rm -rf "$PROJECT_ROOT/$BUILD_DIR"
 fi
 
 # Initialize and update submodules if needed
-if [ ! -f "poky/oe-init-build-env" ]; then
+if [ ! -f "$PROJECT_ROOT/poky/oe-init-build-env" ]; then
     echo "Initializing Git submodules..."
+    cd "$PROJECT_ROOT"
     git submodule update --init --recursive
 fi
 
 # Source the Yocto environment
-if [ -f "poky/oe-init-build-env" ]; then
+if [ -f "$PROJECT_ROOT/poky/oe-init-build-env" ]; then
     echo "Sourcing Yocto build environment..."
+    cd "$PROJECT_ROOT"
     source poky/oe-init-build-env "$BUILD_DIR"
     
     # Copy platform-specific configuration if it doesn't exist
-    if [ ! -f "conf/local.conf" ] && [ -f "../conf-templates/$PLATFORM/local.conf" ]; then
+    if [ ! -f "conf/local.conf" ] && [ -f "$PROJECT_ROOT/conf-templates/$PLATFORM/local.conf" ]; then
         echo "Copying $PLATFORM configuration files..."
-        cp "../conf-templates/$PLATFORM/local.conf" conf/
-        cp "../conf-templates/$PLATFORM/bblayers.conf" conf/
+        cp "$PROJECT_ROOT/conf-templates/$PLATFORM/local.conf" conf/
+        cp "$PROJECT_ROOT/conf-templates/$PLATFORM/bblayers.conf" conf/
     fi
     
     echo ""
