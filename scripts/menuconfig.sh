@@ -34,10 +34,11 @@ show_main_menu() {
     echo "  4) Kernel Configuration"
     echo "  5) Source Management"
     echo "  6) System Status"
-    echo "  7) Clean Build"
+    echo "  7) Flash to SD Card"
+    echo "  8) Clean Build"
     echo "  0) Exit"
     echo ""
-    echo -n "Enter choice [0-7]: "
+    echo -n "Enter choice [0-8]: "
 }
 
 # Show platform menu
@@ -194,7 +195,33 @@ main() {
                 execute_command "System Status" \
                     "'$SCRIPT_DIR/pk-cli-original.sh' status"
                 ;;
-            7)  # Clean
+            7)  # Flash SD Card
+                show_header
+                echo -e "${C_MENU}Flash to SD Card:${C_RESET}"
+                echo ""
+                
+                # Select platform
+                show_platform_menu
+                read platform_choice
+                platform=$(get_platform $platform_choice)
+                
+                if [[ -n "$platform" ]]; then
+                    echo ""
+                    echo -e "${C_INFO}Available block devices:${C_RESET}"
+                    lsblk -d -o NAME,SIZE,TYPE,TRAN,MODEL 2>/dev/null | grep -E "disk|NAME" || true
+                    echo ""
+                    read -p "Enter device path (e.g., /dev/sdb): " device
+                    
+                    if [[ -n "$device" ]]; then
+                        execute_command "Flash $platform to $device" \
+                            "'$SCRIPT_DIR/flash-sdcard.sh' -p '$platform' -d '$device'"
+                    else
+                        echo -e "${C_ERROR}No device specified${C_RESET}"
+                        sleep 2
+                    fi
+                fi
+                ;;
+            8)  # Clean
                 show_platform_menu
                 read platform_choice
                 platform=$(get_platform $platform_choice)
